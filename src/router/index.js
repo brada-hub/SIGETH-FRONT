@@ -26,11 +26,37 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
-
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  })
+
+  Router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('sso_token')
+    const userStr = localStorage.getItem('sso_user')
+
+    if (to.path !== '/login' && (!token || !userStr)) {
+      return next('/login')
+    }
+
+    if (to.meta.permissions && userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        const userPerms = user.permisos || []
+
+        // Check if user has context 'all'
+        if (userPerms.includes('all')) {
+          return next()
+        }
+
+        const hasPermission = to.meta.permissions.some(p => userPerms.includes(p))
+        if (!hasPermission) {
+          return next('/') // Redirect to dashboard if no permission
+        }
+      } catch {
+        return next('/login')
+      }
+    }
+
+    next()
   })
 
   return Router
