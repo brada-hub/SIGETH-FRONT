@@ -213,7 +213,8 @@ const redirectUser = (data, returnToUrl) => {
       const baseUrl = returnToUrl.replace(/#.*$/, '').replace(/\/$/, '')
       redirectUrl = `${baseUrl}/#/login?token=${data.access_token}&user=${userEncoded}`
     } else if (returnToUrl.includes('9002') || returnToUrl.includes('sigva')) {
-      redirectUrl = `http://localhost:9002/admin/login?token=${data.access_token}&user=${userEncoded}`
+      const baseUrl = returnToUrl.replace(/#.*$/, '').replace(/\/$/, '')
+      redirectUrl = `${baseUrl}/admin/login?token=${data.access_token}&user=${userEncoded}`
     } else {
       redirectUrl = returnToUrl
     }

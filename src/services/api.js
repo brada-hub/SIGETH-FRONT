@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: process.env.DEV ? 'http://localhost:8000/api' : 'https://api.sigeth.xpertiaplus.com/api' // URL del Backend Laravel
+  baseURL: `${import.meta.env.VITE_SSO_BACK_URL}/api`
 })
 
 // Interceptor para añadir el token en cada petición
