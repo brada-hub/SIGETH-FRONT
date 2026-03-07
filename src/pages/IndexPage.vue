@@ -81,12 +81,16 @@ const goToApp = (url) => {
     // Construir la URL de redirección correctamente
     // SISPO usa hash mode (/#/), SIGVA usa history mode
     let redirectUrl
-    if (url.includes('9001') || url.includes('sispo')) {
+    if (url.includes('9001') || url.includes('sispo') || url.includes('postulaciones') || url.includes('sipost')) {
       // SISPO: hash mode => base/#/login?token=xxx&user=xxx
       const baseUrl = url.replace(/#.*$/, '').replace(/\/$/, '')
       redirectUrl = `${baseUrl}/#/login?token=${token}&user=${userEncoded}`
-    } else {
+    } else if (url.includes('9002') || url.includes('sigva')) {
       // SIGVA: history mode => base/admin/login?token=xxx&user=xxx
+      const cleanUrl = url.replace(/\?.*$/, '').replace(/\/$/, '')
+      redirectUrl = `${cleanUrl}/admin/login?token=${token}&user=${userEncoded}`
+    } else {
+      // Default: try with query params on the base URL
       const cleanUrl = url.replace(/\?.*$/, '').replace(/\/$/, '')
       redirectUrl = `${cleanUrl}?token=${token}&user=${userEncoded}`
     }

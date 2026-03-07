@@ -209,7 +209,7 @@ const redirectUser = (data, returnToUrl) => {
   if (returnToUrl) {
     const userEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(data.user))))
     let redirectUrl
-    if (returnToUrl.includes('9001') || returnToUrl.includes('sispo')) {
+    if (returnToUrl.includes('9001') || returnToUrl.includes('sispo') || returnToUrl.includes('postulaciones') || returnToUrl.includes('sipost')) {
       const baseUrl = returnToUrl.replace(/#.*$/, '').replace(/\/$/, '')
       redirectUrl = `${baseUrl}/#/login?token=${data.access_token}&user=${userEncoded}`
     } else if (returnToUrl.includes('9002') || returnToUrl.includes('sigva')) {
@@ -218,6 +218,7 @@ const redirectUser = (data, returnToUrl) => {
     } else {
       redirectUrl = returnToUrl
     }
+    console.log('SSO: Redirecting to:', redirectUrl.substring(0, 100) + '...')
     window.location.href = redirectUrl
   } else {
     router.push('/')
@@ -226,20 +227,27 @@ const redirectUser = (data, returnToUrl) => {
 
 onMounted(() => {
   if (route.query.logout === 'true') {
+     console.log('Login: Cierre de sesión forzado detectado.')
      authService.logout()
+     localStorage.clear() // Limpieza total de seguridad
      $q.notify({ message: 'Sesión cerrada correctamente', color: 'info', icon: 'logout', position: 'top' })
   } else if (localStorage.getItem('sso_token') && localStorage.getItem('sso_user')) {
     const user = JSON.parse(localStorage.getItem('sso_user'))
+    console.log('Login: Sesión previa encontrada:', user.nombres)
+
     if (user.must_change_password) {
       showForceChangeDialog.value = true
     } else {
       const returnTo = route.query.returnTo
       if (returnTo) {
+        // EVITAR BUCLE: Si ya estamos logueados y venimos de un returnTo, redirigir de inmediato
+        console.log('Login: Redirigiendo a destino:', returnTo)
         redirectUser({
           access_token: localStorage.getItem('sso_token'),
           user: user
         }, returnTo)
       } else {
+        // Si no hay returnTo y estamos logueados, vamos al Dashboard del SSO
         router.push('/')
       }
     }
