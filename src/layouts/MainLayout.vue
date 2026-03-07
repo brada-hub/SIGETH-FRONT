@@ -256,8 +256,9 @@ const logout = async () => {
   } catch {
     // ignore
   }
+  localStorage.clear() // LIMPIEZA TOTAL
   $q.notify({ type: 'positive', message: 'Sesión cerrada correctamente', position: 'top' })
-  router.push('/login')
+  window.location.href = '/#/login' // Redirección dura para limpiar estado de Vue
 }
 
 onMounted(() => {
@@ -272,10 +273,10 @@ onMounted(() => {
       const perms = user.permisos || []
 
       configMenuItems.value = [
-        { label: 'Gestionar Usuarios', icon: 'manage_accounts', to: '/users', show: perms.includes('usuarios') || perms.includes('all') },
-        { label: 'Gestionar Roles', icon: 'security', to: '/roles', show: perms.includes('roles') || perms.includes('all') },
-        { label: 'Gestionar Sistemas', icon: 'apps', to: '/applications', show: perms.includes('sistemas') || perms.includes('all') },
-        { label: 'Gestionar Sedes', icon: 'apartment', to: '/sedes', show: perms.includes('sedes') || perms.includes('all') },
+        { label: 'Gestionar Usuarios', icon: 'manage_accounts', to: '/users', show: perms.includes('gestionar_usuarios') || perms.includes('usuarios') || perms.includes('all') },
+        { label: 'Gestionar Roles', icon: 'security', to: '/roles', show: perms.includes('gestionar_roles') || perms.includes('roles') || perms.includes('all') },
+        { label: 'Gestionar Sistemas', icon: 'apps', to: '/applications', show: perms.includes('gestionar_aplicaciones') || perms.includes('sistemas') || perms.includes('all') },
+        { label: 'Gestionar Sedes', icon: 'apartment', to: '/sedes', show: perms.includes('gestionar_sedes') || perms.includes('sedes') || perms.includes('all') },
       ].filter(item => item.show)
     } catch {
       // ignore
