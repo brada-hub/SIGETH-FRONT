@@ -236,13 +236,13 @@ const systemsList = ref([])
 // Se inicializará al cargar las apps
 const buildSystemsList = () => {
   const mapping = [
-    { systemId: 1, appName: 'SISPO', name: 'SISPO — Postulaciones', icon: '📋', color: '#673ab7', badgeColor: 'deep-purple' },
-    { systemId: 2, appName: 'SIGVA', name: 'SIGVA — Vacaciones', icon: '🏖️', color: '#00897b', badgeColor: 'teal' },
-    { systemId: 3, appName: 'SSO', name: 'SIGETH — Panel Central', icon: '🔐', color: '#1976D2', badgeColor: 'blue' },
+    { appName: 'SISPO', name: 'SISPO — Postulaciones', icon: '📋', color: '#673ab7', badgeColor: 'deep-purple' },
+    { appName: 'SIGVA', name: 'SIGVA — Vacaciones', icon: '🏖️', color: '#00897b', badgeColor: 'teal' },
+    { appName: 'SIGETH', name: 'SIGETH — Panel Central', icon: '🔐', color: '#1976D2', badgeColor: 'blue' },
   ]
   systemsList.value = mapping.map(m => {
-    const app = applications.value.find(a => a.nombre === m.appName)
-    return { ...m, appId: app?.id || null }
+    const app = applications.value.find(a => a.nombre === m.appName || a.key === m.appName.toLowerCase())
+    return { ...m, appId: app?.id || null, systemId: app?.id || null }
   })
 }
 
@@ -271,7 +271,7 @@ const toggleSystem = (sys, val) => {
   }
 }
 
-const getPermsBySystem = (sysId) => allPermissions.value.filter(p => p.system_id === sysId)
+const getPermsBySystem = (sysId) => allPermissions.value.filter(p => p.application_id === sysId)
 
 const isAllSystemSelected = (sysId) => {
   const sysPerms = getPermsBySystem(sysId)
@@ -306,7 +306,7 @@ const onRolChange = (rolId) => {
     const permSystems = new Set()
     rolPerms.forEach(permId => {
       const perm = allPermissions.value.find(p => p.id === permId)
-      if (perm) permSystems.add(perm.system_id)
+      if (perm) permSystems.add(perm.application_id)
     })
     // Mapear system_id a app_id y activar
     systemsList.value.forEach(sys => {
