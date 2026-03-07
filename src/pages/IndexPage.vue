@@ -57,7 +57,7 @@ onMounted(() => {
     const user = JSON.parse(userStr)
     userName.value = `${user.nombres} ${user.apellido_paterno || user.apellidos || ''}`.trim()
     applications.value = user.applications
-      .filter(app => app.nombre !== 'SSO')
+      .filter(app => app.nombre !== 'SSO' && app.nombre !== 'SIGETH' && app.key !== 'sigeth')
       .map(app => ({
         name: app.nombre,
         icon: app.icono || 'apps',
